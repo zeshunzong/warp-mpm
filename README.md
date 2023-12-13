@@ -44,10 +44,19 @@ We allow flexible interactions with PyTorch, which makes it a great building blo
 
 ## If this helps you, please cite us!
 ```
-@article{zong2023neural,
-  title={Neural Stress Fields for Reduced-order Elastoplasticity and Fracture},
-  author={Zong, Zeshun and Li, Xuan and Li, Minchen and Chiaramonte, Maurizio M and Matusik, Wojciech and Grinspun, Eitan and Carlberg, Kevin and Jiang, Chenfanfu and Chen, Peter Yichen},
-  journal={arXiv preprint arXiv:2310.17790},
-  year={2023}
+@inproceedings{10.1145/3610548.3618207,
+author = {Zong, Zeshun and Li, Xuan and Li, Minchen and Chiaramonte, Maurizio M. and Matusik, Wojciech and Grinspun, Eitan and Carlberg, Kevin and Jiang, Chenfanfu and Chen, Peter Yichen},
+title = {Neural Stress Fields for Reduced-Order Elastoplasticity and Fracture},
+year = {2023},
+isbn = {9798400703157},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3610548.3618207},
+doi = {10.1145/3610548.3618207},
+booktitle = {SIGGRAPH Asia 2023 Conference Papers},
+articleno = {78},
+numpages = {11},
+keywords = {Neural field, reduced-order model, the material point method, model reduction},
+series = {SA '23}
 }
 ```
