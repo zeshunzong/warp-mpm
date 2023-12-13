@@ -22,17 +22,9 @@ position_tensor = mpm_solver.export_particle_x_to_torch()
 
 mpm_solver.load_initial_data_from_torch(position_tensor, volume_tensor)
 
-# Note: You must provide 'density=..' in the function set_parameters() to set particle_mass = density * particle_volume
-material_params = {
-    'E': 2000,
-    'nu': 0.2,
-    'material': 'sand',
-    'friction_angle': 35,
-    'g': [0.0, 0.0, -6.0],
-    'density': 200.0
-}
+# Note: You must provide 'density=..' to set particle_mass = density * particle_volume
 
-material_params2 = {
+material_params = {
     'E': 2000,
     'nu': 0.2,
     "material": "sand",
@@ -40,12 +32,9 @@ material_params2 = {
     'g': [0.0, 0.0, -4.0],
     "density": 200.0
 }
-mpm_solver.set_parameters_dict(material_params2)
+mpm_solver.set_parameters_dict(material_params)
 
 mpm_solver.finalize_mu_lam() # set mu and lambda from the E and nu input
-print(wp.to_torch(mpm_solver.mpm_model.mu)[0])
-input()
-
 
 mpm_solver.add_surface_collider((0.0, 0.0, 0.13), (0.0,0.0,1.0), 'sticky', 0.0)
 
@@ -55,9 +44,6 @@ directory_to_save = './sim_results'
 save_data_at_frame(mpm_solver, directory_to_save, 0, save_to_ply=True, save_to_h5=False)
 
 for k in range(1,50):
-    # print(wp.to_torch(mpm_solver.mpm_state.particle_stress)[0,:])
-    # print(mpm_solver.export_particle_v_to_torch()[0,:])
-    # input()
     mpm_solver.p2g2p(k, 0.002, device=dvc)
     save_data_at_frame(mpm_solver, directory_to_save, k, save_to_ply=True, save_to_h5=False)
 
@@ -65,10 +51,10 @@ for k in range(1,50):
 
 # extract the position, make some changes, load it back
 position = mpm_solver.export_particle_x_to_torch()
-# print(position.shape) # shape is tensor torch.Size([n_particles, 3])
+# e.g. we shift the x position
 position[:,0] = position[:,0] + 0.1
 mpm_solver.import_particle_x_from_torch(position)
-
+# keep running sim
 for k in range(50,100):
  
     mpm_solver.p2g2p(k, 0.002, device=dvc)
