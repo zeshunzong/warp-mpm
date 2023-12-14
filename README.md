@@ -59,4 +59,11 @@ numpages = {11},
 keywords = {Neural field, reduced-order model, the material point method, model reduction},
 series = {SA '23}
 }
+
+@article{xie2023physgaussian,
+      title={PhysGaussian: Physics-Integrated 3D Gaussians for Generative Dynamics}, 
+      author={Xie, Tianyi and Zong, Zeshun and Qiu, Yuxing and Li, Xuan and Feng, Yutao and Yang, Yin and Jiang, Chenfanfu},
+      journal={arXiv preprint arXiv:2311.12198},
+      year={2023},
+}
 ```
