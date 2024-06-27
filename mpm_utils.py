@@ -14,6 +14,15 @@ def kirchoff_stress_FCR(
     id = wp.mat33(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
     return 2.0 * mu * (F - R) * wp.transpose(F) + id * lam * J * (J - 1.0)
 
+@wp.func
+def kirchoff_stress_water(
+    J: float, bulk: float
+):
+    gamma = 1.1 # gamma is set to be a liitle greater than 1 for weakly compressible fluids
+    pressure = -bulk * (wp.pow(J, -gamma) - 1.)
+    id = wp.mat33(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+    cauchy_stress = id * pressure
+    return J * cauchy_stress
 
 @wp.func
 def kirchoff_stress_neoHookean(
@@ -270,6 +279,11 @@ def compute_mu_lam_from_E_nu(state: MPMStateStruct, model: MPMModelStruct):
     model.lam[p] = model.E[p] * model.nu[p]  / ((1.0 + model.nu[p]) * (1.0 - 2.0 * model.nu[p]))
 
 @wp.kernel
+def compute_bulk(state:MPMStateStruct, model:MPMModelStruct):
+    p = wp.tid()
+    model.bulk[p] = model.lam[p] + 2./3. * model.mu[p]
+
+@wp.kernel
 def zero_grid(state: MPMStateStruct, model: MPMModelStruct):
     grid_x, grid_y, grid_z = wp.tid()
     state.grid_m[grid_x, grid_y, grid_z] = 0.0
@@ -486,6 +500,10 @@ def compute_stress_from_F_trial(
             # temporarily use stvk, subject to change
             stress = kirchoff_stress_StVK(
                 state.particle_F[p], U, V, sig, model.mu[p], model.lam[p]
+            )
+        if model.material == 6: # fluid
+            stress = kirchoff_stress_water(
+                J, model.bulk[p]
             )
 
         stress = (stress + wp.transpose(stress)) / 2.0  # enfore symmetry

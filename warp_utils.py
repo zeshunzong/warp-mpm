@@ -18,6 +18,7 @@ class MPMModelStruct:
     lam: wp.array(dtype=float)
     E: wp.array(dtype=float)
     nu: wp.array(dtype=float)
+    bulk: wp.array(dtype=float)
     material: int
 
     ######## for plasticity ####

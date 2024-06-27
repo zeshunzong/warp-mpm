@@ -35,7 +35,7 @@ class MPM_Simulator_WARP:
         self.mpm_model.nu = wp.zeros(shape=n_particles, dtype=float, device=device)
         self.mpm_model.mu = wp.zeros(shape=n_particles, dtype=float, device=device)
         self.mpm_model.lam = wp.zeros(shape=n_particles, dtype=float, device=device)
-
+        self.mpm_model.bulk = wp.zeros(shape=n_particles, dtype=float, device=device)
         self.mpm_model.update_cov_with_F = False
 
 
@@ -259,6 +259,8 @@ class MPM_Simulator_WARP:
                 self.mpm_model.material = 4
             elif kwargs["material"] == "plasticine":
                 self.mpm_model.material = 5
+            elif kwargs["material"] == "fluid":
+                self.mpm_model.material = 6
             else:
                 raise TypeError("Undefined material type")
 
@@ -304,6 +306,13 @@ class MPM_Simulator_WARP:
                 dim=self.n_particles,
                 inputs=[self.mpm_model.nu, kwargs["nu"]],
                 device=device,
+            )
+        if "bulk_modulus" in kwargs:
+            wp.launch(
+                kernel=set_value_to_float_array,
+                dim=self.n_particles,
+                inputs=[self.mpm_model.bulk, kwargs["bulk_modulus"]],
+                device=device
             )
         if "yield_stress" in kwargs:
             val = kwargs["yield_stress"]
@@ -379,9 +388,13 @@ class MPM_Simulator_WARP:
             )
 
 
-    def finalize_mu_lam(self, device = "cuda:0"):
+    def finalize_mu_lam_bulk(self, device = "cuda:0"):
         wp.launch(kernel = compute_mu_lam_from_E_nu, dim = self.n_particles, inputs = [self.mpm_state, self.mpm_model], device=device)
-
+        wp.launch(kernel=compute_bulk,
+                  dim=self.n_particles,
+                  inputs=[self.mpm_state, self.mpm_model],
+                  device=device
+                  )
     def p2g2p(self, step, dt, device="cuda:0"):
         grid_size = (
             self.mpm_model.grid_dim_x,

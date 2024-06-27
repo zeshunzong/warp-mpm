@@ -25,21 +25,23 @@ mpm_solver.load_initial_data_from_torch(position_tensor, volume_tensor)
 # Note: You must provide 'density=..' to set particle_mass = density * particle_volume
 
 material_params = {
-    'E': 2000,
-    'nu': 0.2,
-    "material": "sand",
+    'bulk_modulus': 2000.0,
+    "material": "fluid",
     'friction_angle': 35,
     'g': [0.0, 0.0, -4.0],
-    "density": 200.0
+    "density": 1000.0
 }
 mpm_solver.set_parameters_dict(material_params)
 
-mpm_solver.finalize_mu_lam() # set mu and lambda from the E and nu input
+# add bounding box for fluid
+box_length = 0.4
+mpm_solver.add_surface_collider((0.0, 0.0, 0.13), (0.0,0.0,1.0), 'cut', 0.0)
+mpm_solver.add_surface_collider((0.5-box_length/2., 0.0, 0.0), (1.0,0.0,0.0), 'cut', 0.0)
+mpm_solver.add_surface_collider((0.5+box_length/2., 0.0, 0.0), (-1.0,0.0,0.0), 'cut', 0.0)
+mpm_solver.add_surface_collider((0.0, 0.5+box_length/2., 0.0), (0.0,-1.0,0.0), 'cut', 0.0)
+mpm_solver.add_surface_collider((0.0, 0.5-box_length/2., 0.0), (0.0,1.0,0.0), 'cut', 0.0)
 
-mpm_solver.add_surface_collider((0.0, 0.0, 0.13), (0.0,0.0,1.0), 'sticky', 0.0)
-
-
-directory_to_save = './sim_results/sand'
+directory_to_save = './sim_results/fluid'
 
 save_data_at_frame(mpm_solver, directory_to_save, 0, save_to_ply=True, save_to_h5=False)
 
