@@ -36,9 +36,13 @@ pip install -r requirements.txt
 ```
 
 ## Examples
-Sand: column collapse 
+For sand column collapsing, run:
 ```
 python run_sand.py
+```
+for water column collapsing, run:
+```
+python run_fluid.py
 ```
 We allow flexible interactions with PyTorch, which makes it a great building block for Machine Learning + Simulation.
 
