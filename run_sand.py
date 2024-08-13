@@ -34,7 +34,7 @@ material_params = {
 }
 mpm_solver.set_parameters_dict(material_params)
 
-mpm_solver.finalize_mu_lam() # set mu and lambda from the E and nu input
+mpm_solver.finalize_mu_lam_bulk() # set mu and lambda from the E and nu input
 
 mpm_solver.add_surface_collider((0.0, 0.0, 0.13), (0.0,0.0,1.0), 'sticky', 0.0)
 
